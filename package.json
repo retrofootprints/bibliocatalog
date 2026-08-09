@@ -1,0 +1,25 @@
+{
+  "name": "bibliocatalog",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@preact/signals": "^1.3.0",
+    "dexie": "^4.0.10",
+    "minisearch": "^7.1.1",
+    "preact": "^10.29.7",
+    "zxing-wasm": "^2.1.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
+    "@types/node": "^22.10.0",
+    "typescript": "~5.6.3",
+    "vite": "^5.4.11"
+  }
+}
