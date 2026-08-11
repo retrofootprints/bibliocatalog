@@ -171,12 +171,10 @@ export function Scanner({ onDecoded, onInvalid }: ScannerProps) {
 
   return (
     <div class="scanner">
-      {cameraActive && (
-        <div class="scanner__viewport">
-          <video ref={videoRef} class="scanner__video" playsInline muted />
-          <div class="scanner__frame" />
-        </div>
-      )}
+      <div class={`scanner__viewport${cameraActive ? '' : ' scanner__viewport--hidden'}`}>
+        <video ref={videoRef} class="scanner__video" playsInline autoplay muted />
+        <div class="scanner__frame" />
+      </div>
 
       {!cameraActive && (
         <div class="scanner__idle">

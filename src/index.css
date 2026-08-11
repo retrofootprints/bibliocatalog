@@ -458,6 +458,9 @@ body {
   border-radius: var(--radius);
   overflow: hidden;
 }
+.scanner__viewport--hidden {
+  display: none;
+}
 .scanner__video {
   width: 100%;
   height: 100%;
