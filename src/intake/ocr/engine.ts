@@ -8,6 +8,11 @@
 // tesseractAssets plugin in vite.config.ts). Language data still comes from
 // tesseract.js's own CDN on first use and is then cached in IndexedDB by the
 // library, which is what SPEC §4.2's "cache thereafter" asks for.
+//
+// Note on orientation: tesseract's own OSD (`worker.detect`, the OSD page-seg
+// modes) needs the legacy engine, which the LSTM-only core does not carry. That
+// is why ../ocr/orientation.ts reads each spine both ways and compares, rather
+// than asking tesseract which way up it is.
 
 import { createWorker, PSM, type Worker } from 'tesseract.js';
 
@@ -23,27 +28,40 @@ const LANGS = 'por+eng';
 const OEM_LSTM_ONLY = 1;
 
 /** "A single uniform block of text": a spine is usually title over author. */
-const SPINE_PAGE_SEG_MODE = PSM.SINGLE_BLOCK;
+export const SPINE_PAGE_SEG_MODE = PSM.SINGLE_BLOCK;
+
+/** Retry mode for spines whose text runs as one long line down the board. */
+export const SINGLE_LINE_PAGE_SEG_MODE = PSM.SINGLE_LINE;
 
 export async function createSpineWorker(): Promise<Worker> {
   const worker = await createWorker(LANGS, OEM_LSTM_ONLY, {
     corePath: CORE_PATH,
     workerPath: WORKER_PATH,
   });
-  await worker.setParameters({ tessedit_pageseg_mode: SPINE_PAGE_SEG_MODE });
+  await worker.setParameters({
+    tessedit_pageseg_mode: SPINE_PAGE_SEG_MODE,
+    // Crops carry no DPI metadata, so tesseract estimates one and warns. Stating
+    // it removes that guess and steadies behaviour on small images.
+    user_defined_dpi: '300',
+  });
   return worker;
 }
 
 export interface Reading {
   text: string;
-  /** 0-1. Tesseract reports 0-100. */
+  /** 0-1. Tesseract reports 0-100 as mean text confidence. */
   confidence: number;
 }
 
-export async function recognizeCanvas(worker: Worker, canvas: OffscreenCanvas): Promise<Reading> {
-  // tesseract.js's loader handles Blob but not OffscreenCanvas (see
-  // tesseract.js/src/worker/browser/loadImage.js), so hand it a blob.
-  const blob = await canvas.convertToBlob({ type: 'image/png' });
-  const { data } = await worker.recognize(blob);
+type RecognizeOptions = NonNullable<Parameters<Worker['recognize']>[1]>;
+
+export async function recognizeCanvas(worker: Worker, canvas: OffscreenCanvas, pageSegMode?: PSM): Promise<Reading> {
+  // Page-seg mode is passed per call: the worker forwards any option it does not
+  // recognise straight to SetVariable, so this needs no setParameters round-trip.
+  // `RecognizeOptions` only types tesseract.js's own keys, hence the cast.
+  const options = pageSegMode
+    ? ({ tessedit_pageseg_mode: pageSegMode } as unknown as RecognizeOptions)
+    : ({} as RecognizeOptions);
+  const { data } = await worker.recognize(canvas, options);
   return { text: data.text ?? '', confidence: Math.max(0, Math.min(1, (data.confidence ?? 0) / 100)) };
 }

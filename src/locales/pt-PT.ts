@@ -163,6 +163,8 @@ export const ptPT: TranslationKeys = {
   'spines.none.title': 'Não foi detetada nenhuma lombada',
   'spines.none.body': 'Tente uma fotografia mais próxima, mais direita e com melhor luz — ou adicione o livro manualmente.',
   'spines.manualInstead': 'Adicionar manualmente',
+  'spines.debug.showProcessed': 'Mostrar a imagem processada',
+  'spines.debug.hint': 'A imagem a preto e branco é a que o OCR leu. Se estiver ilegível, o problema é da preparação da imagem, não do texto.',
   'spines.confidence': 'Confiança {{percent}}%',
   'spines.lowConfidence': 'Confiança baixa — verifique',
   'spines.rawText': 'Texto lido',

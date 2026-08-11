@@ -161,6 +161,8 @@ export const en: TranslationKeys = {
   'spines.none.title': 'No spines detected',
   'spines.none.body': 'Try a closer, straighter, better-lit photo — or add the book manually.',
   'spines.manualInstead': 'Add manually',
+  'spines.debug.showProcessed': 'Show the processed image',
+  'spines.debug.hint': 'The black-and-white image is what OCR actually read. If it looks illegible, the problem is image preparation, not the text.',
   'spines.confidence': '{{percent}}% confidence',
   'spines.lowConfidence': 'Low confidence — check this one',
   'spines.rawText': 'Text read',

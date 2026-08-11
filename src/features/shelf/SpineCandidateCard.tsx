@@ -23,6 +23,8 @@ export interface ReviewItem {
 
 export interface SpineCandidateCardProps {
   item: ReviewItem;
+  /** Show the preprocessed image OCR consumed instead of the colour crop. */
+  showProcessed: boolean;
   onAccept: () => void;
   onReject: () => void;
   onStartEdit: () => void;
@@ -61,7 +63,15 @@ function initialFromItem(item: ReviewItem): Partial<Book> {
   };
 }
 
-export function SpineCandidateCard({ item, onAccept, onReject, onStartEdit, onCancelEdit, onSubmitEdit }: SpineCandidateCardProps) {
+export function SpineCandidateCard({
+  item,
+  showProcessed,
+  onAccept,
+  onReject,
+  onStartEdit,
+  onCancelEdit,
+  onSubmitEdit,
+}: SpineCandidateCardProps) {
   const { candidate, status } = item;
   const lowConfidence = candidate.confidence <= LOW_CONFIDENCE;
   const resolved = status === 'accepted' || status === 'rejected';
@@ -82,7 +92,7 @@ export function SpineCandidateCard({ item, onAccept, onReject, onStartEdit, onCa
 
   return (
     <li class={`spine-card spine-card--${status}`}>
-      <SpineCrop crop={candidate.crop} alt={candidate.rawText} />
+      <SpineCrop crop={showProcessed ? candidate.debugCrop : candidate.crop} alt={candidate.rawText} />
 
       <div class="spine-card__body">
         <p class="spine-card__raw">

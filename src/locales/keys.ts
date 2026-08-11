@@ -164,6 +164,8 @@ export interface TranslationKeys {
   'spines.none.title': string;
   'spines.none.body': string;
   'spines.manualInstead': string;
+  'spines.debug.showProcessed': string;
+  'spines.debug.hint': string;
   'spines.confidence': string; // {{percent}}
   'spines.lowConfidence': string;
   'spines.rawText': string;

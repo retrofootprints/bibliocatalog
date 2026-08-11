@@ -41,6 +41,7 @@ export function ShelfScanView() {
   const [moduleError, setModuleError] = useState(false);
   const [items, setItems] = useState<ReviewItem[]>([]);
   const [result, setResult] = useState<ReconcileResult | null>(null);
+  const [showProcessed, setShowProcessed] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -374,11 +375,17 @@ export function ShelfScanView() {
       {items.length > 0 && (
         <>
           <p class="library-view__count">{t('spines.candidates', { count: items.length })}</p>
+          <label class="spine-list__toolbar">
+            <input type="checkbox" checked={showProcessed} onChange={(e) => setShowProcessed((e.target as HTMLInputElement).checked)} />
+            {t('spines.debug.showProcessed')}
+          </label>
+          {showProcessed && <p class="book-form__hint">{t('spines.debug.hint')}</p>}
           <ul class="spine-list">
             {items.map((item) => (
               <SpineCandidateCard
                 key={item.candidate.id}
                 item={item}
+                showProcessed={showProcessed}
                 onAccept={() => accept(item)}
                 onReject={() => updateItem(item.candidate.id, { status: 'rejected' })}
                 onStartEdit={() => updateItem(item.candidate.id, { editing: true })}
