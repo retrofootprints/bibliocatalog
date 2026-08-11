@@ -11,8 +11,10 @@ export interface TranslationKeys {
 
   'nav.library': string;
   'nav.scan': string;
+  'nav.spines': string;
   'nav.add': string;
   'nav.settings': string;
+  'nav.beta': string;
 
   'common.save': string;
   'common.cancel': string;
@@ -43,6 +45,7 @@ export interface TranslationKeys {
   'library.sort.year': string;
   'library.filter.unverifiedOnly': string;
   'library.filter.readStatus': string;
+  'library.filter.shelf': string;
   'library.filter.all': string;
   'library.unverifiedBadge': string;
 
@@ -124,6 +127,67 @@ export interface TranslationKeys {
   'scan.addedToLibrary': string;
   'scan.workerError': string;
 
+  'shelf.title': string;
+  'shelf.label': string;
+  'shelf.name': string;
+  'shelf.room': string;
+  'shelf.none': string;
+  'shelf.add': string;
+  'shelf.count': string; // {{count}}
+  'shelf.empty.title': string;
+  'shelf.empty.body': string;
+  'shelf.nameRequired': string;
+  'shelf.saved': string;
+  'shelf.deleteConfirm': string; // {{name}}
+  'shelf.deleted': string;
+  'shelf.lastScan': string; // {{date}}
+  'shelf.neverScanned': string;
+  'shelf.manage': string;
+
+  'spines.title': string;
+  'spines.gate.title': string;
+  'spines.gate.body': string;
+  'spines.gate.accuracy': string;
+  'spines.gate.size': string; // {{size}}
+  'spines.gate.accept': string;
+  'spines.noShelves.title': string;
+  'spines.noShelves.body': string;
+  'spines.noShelves.create': string;
+  'spines.chooseShelf': string;
+  'spines.capture': string;
+  'spines.recapture': string;
+  'spines.notRetained': string;
+  'spines.loadingModule': string;
+  'spines.running': string; // {{done}} / {{total}}
+  'spines.moduleError': string;
+  'spines.candidates': string; // {{count}}
+  'spines.none.title': string;
+  'spines.none.body': string;
+  'spines.manualInstead': string;
+  'spines.confidence': string; // {{percent}}
+  'spines.lowConfidence': string;
+  'spines.rawText': string;
+  'spines.searching': string;
+  'spines.noMatch': string;
+  'spines.accept': string;
+  'spines.reject': string;
+  'spines.accepted': string;
+  'spines.rejected': string;
+  'spines.finish': string;
+  'spines.startOver': string;
+
+  'reconcile.title': string;
+  'reconcile.intro': string;
+  'reconcile.missing': string;
+  'reconcile.missingHint': string;
+  'reconcile.unexpected': string;
+  'reconcile.unexpectedHint': string;
+  'reconcile.reassign': string;
+  'reconcile.reassigned': string;
+  'reconcile.new': string;
+  'reconcile.clean': string;
+  'reconcile.done': string;
+
   'settings.title': string;
   'settings.language': string;
   'settings.language.pt-PT': string;
@@ -149,4 +213,8 @@ export interface TranslationKeys {
   'settings.import.confirmReplace': string;
   'settings.import.success': string; // {{count}}
   'settings.import.error': string;
+  'settings.ocr.title': string;
+  'settings.ocr.body': string;
+  'settings.ocr.toggle': string;
+  'settings.ocr.shelves': string;
 }

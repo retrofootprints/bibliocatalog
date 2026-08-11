@@ -36,6 +36,7 @@ export function ManualEntryForm() {
       readStatus: values.readStatus,
       copyLabel: values.copyLabel.trim() || undefined,
       acquiredAt: values.acquiredAt ? new Date(values.acquiredAt).toISOString() : undefined,
+      shelfId: values.shelfId || undefined,
       coverBlobId: values.coverBlobId,
       source: 'manual',
       verifiedByUser: true,

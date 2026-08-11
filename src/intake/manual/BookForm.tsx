@@ -1,5 +1,6 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import type { Book, ReadStatus } from '../../db/types';
+import { refreshShelves, shelves } from '../../features/shelves/store';
 import { t } from '../../locales';
 import { storeCoverFromBlob } from '../../metadata/cover';
 import { searchByText } from '../../metadata/resolve';
@@ -21,6 +22,7 @@ export interface BookFormValues {
   readStatus: ReadStatus;
   copyLabel: string;
   acquiredAt: string;
+  shelfId: string;
   coverBlobId?: string;
 }
 
@@ -49,6 +51,7 @@ function toFormValues(book?: Partial<Book>): BookFormValues {
     readStatus: book?.readStatus ?? 'unread',
     copyLabel: book?.copyLabel ?? '',
     acquiredAt: book?.acquiredAt?.slice(0, 10) ?? '',
+    shelfId: book?.shelfId ?? '',
     coverBlobId: book?.coverBlobId,
   };
 }
@@ -62,6 +65,10 @@ export function BookForm({ initial, submitLabel, onSubmit, onCancel, showAssist 
   const [assistError, setAssistError] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    refreshShelves();
+  }, []);
 
   function set<K extends keyof BookFormValues>(key: K, value: BookFormValues[K]) {
     setValues((v) => ({ ...v, [key]: value }));
@@ -238,6 +245,18 @@ export function BookForm({ initial, submitLabel, onSubmit, onCancel, showAssist 
           <input type="date" class="input" value={values.acquiredAt} onInput={(e) => set('acquiredAt', (e.target as HTMLInputElement).value)} />
         </label>
       </div>
+
+      <label class="field">
+        <span>{t('shelf.label')}</span>
+        <select class="input" value={values.shelfId} onChange={(e) => set('shelfId', (e.target as HTMLSelectElement).value)}>
+          <option value="">{t('shelf.none')}</option>
+          {shelves.value.map((shelf) => (
+            <option key={shelf.id} value={shelf.id}>
+              {shelf.room ? `${shelf.room} — ${shelf.name}` : shelf.name}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <label class="field">
         <span>{t('book.tags')}</span>

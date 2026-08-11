@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { ReadStatus } from '../../db/types';
 import { t } from '../../locales';
+import { navigate } from '../../ui/router';
+import { refreshShelves, shelves } from '../shelves/store';
 import { BookCard } from './BookCard';
 import { searchLibrary } from './searchIndex';
 import { books, booksLoading, refreshBooks } from './store';
@@ -16,18 +18,20 @@ export function LibraryView() {
   const [sort, setSort] = useState<SortKey>('recent');
   const [unverifiedOnly, setUnverifiedOnly] = useState(false);
   const [statusFilter, setStatusFilter] = useState<ReadStatus | 'all'>('all');
+  const [shelfFilter, setShelfFilter] = useState<string>('all');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     refreshBooks();
+    refreshShelves();
   }, []);
 
   useEffect(() => {
     localStorage.setItem('bc.view', view);
   }, [view]);
 
-  useEffect(() => setVisibleCount(PAGE_SIZE), [query, sort, unverifiedOnly, statusFilter]);
+  useEffect(() => setVisibleCount(PAGE_SIZE), [query, sort, unverifiedOnly, statusFilter, shelfFilter]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -47,6 +51,8 @@ export function LibraryView() {
     }
     if (unverifiedOnly) list = list.filter((b) => !b.verifiedByUser);
     if (statusFilter !== 'all') list = list.filter((b) => b.readStatus === statusFilter);
+    if (shelfFilter === 'none') list = list.filter((b) => !b.shelfId);
+    else if (shelfFilter !== 'all') list = list.filter((b) => b.shelfId === shelfFilter);
 
     const sorted = [...list];
     switch (sort) {
@@ -63,7 +69,7 @@ export function LibraryView() {
         sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     }
     return sorted;
-  }, [query, sort, unverifiedOnly, statusFilter]);
+  }, [query, sort, unverifiedOnly, statusFilter, shelfFilter]);
 
   const visible = filtered.slice(0, visibleCount);
 
@@ -125,10 +131,27 @@ export function LibraryView() {
           </select>
         </label>
 
+        <label class="library-view__filter">
+          {t('library.filter.shelf')}
+          <select class="input" value={shelfFilter} onChange={(e) => setShelfFilter((e.target as HTMLSelectElement).value)}>
+            <option value="all">{t('library.filter.all')}</option>
+            <option value="none">{t('shelf.none')}</option>
+            {shelves.value.map((shelf) => (
+              <option key={shelf.id} value={shelf.id}>
+                {shelf.room ? `${shelf.room} — ${shelf.name}` : shelf.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
         <label class="library-view__filter library-view__filter--checkbox">
           <input type="checkbox" checked={unverifiedOnly} onChange={(e) => setUnverifiedOnly((e.target as HTMLInputElement).checked)} />
           {t('library.filter.unverifiedOnly')}
         </label>
+
+        <button type="button" class="btn btn--text library-view__filter" onClick={() => navigate('/shelves')}>
+          {t('shelf.manage')}
+        </button>
       </div>
 
       {!booksLoading.value && <p class="library-view__count">{t('library.count', { count: filtered.length })}</p>}

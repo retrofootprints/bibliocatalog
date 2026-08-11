@@ -1,5 +1,5 @@
 import { db } from './schema';
-import type { Book, Cover, Settings } from './types';
+import type { Book, Cover, Loan, Scan, Settings, Shelf } from './types';
 
 function uuid(): string {
   return crypto.randomUUID();
@@ -60,6 +60,60 @@ export async function listBooks(): Promise<Book[]> {
 export async function findByIsbn13(isbn13: string): Promise<Book[]> {
   const matches = await db.books.where('isbn13').equals(isbn13).toArray();
   return matches.filter((b) => !b.deletedAt);
+}
+
+/** All shelves, ordered by explicit `position` then name (SPEC §6.3). */
+export async function listShelves(): Promise<Shelf[]> {
+  const all = await db.shelves.toArray();
+  return all.sort((a, b) => (a.position ?? 0) - (b.position ?? 0) || a.name.localeCompare(b.name));
+}
+
+export async function createShelf(input: { name: string; room?: string; position?: number }): Promise<Shelf> {
+  const shelf: Shelf = {
+    id: uuid(),
+    name: input.name,
+    room: input.room,
+    position: input.position,
+    createdAt: nowIso(),
+  };
+  await db.shelves.put(shelf);
+  return shelf;
+}
+
+export async function updateShelf(id: string, patch: Partial<Shelf>): Promise<void> {
+  await db.shelves.update(id, patch);
+}
+
+/** Delete a shelf, unassigning (not deleting) the books that sat on it. */
+export async function deleteShelf(id: string): Promise<void> {
+  await db.transaction('rw', db.books, db.shelves, async () => {
+    const assigned = await db.books.where('shelfId').equals(id).toArray();
+    const now = nowIso();
+    for (const book of assigned) {
+      await db.books.update(book.id, { shelfId: undefined, updatedAt: now });
+    }
+    await db.shelves.delete(id);
+  });
+}
+
+/** Non-deleted books assigned to a shelf. */
+export async function booksOnShelf(shelfId: string): Promise<Book[]> {
+  const assigned = await db.books.where('shelfId').equals(shelfId).toArray();
+  return assigned.filter((b) => !b.deletedAt);
+}
+
+/** Book ids with an open loan (no `returnedAt`) — excluded from "missing" in reconciliation, SPEC §6.5. */
+export async function lentOutBookIds(): Promise<Set<string>> {
+  const open = await db.loans.filter((loan: Loan) => !loan.returnedAt).toArray();
+  return new Set(open.map((loan) => loan.bookId));
+}
+
+/** Record one completed shelf scan. Frames are never stored — only derived results (SPEC §12.2). */
+export async function recordScan(input: Omit<Scan, 'id' | 'scannedAt'>): Promise<Scan> {
+  const scan: Scan = { id: uuid(), scannedAt: nowIso(), ...input };
+  await db.scans.put(scan);
+  await db.shelves.update(scan.shelfId, { lastScanAt: scan.scannedAt });
+  return scan;
 }
 
 export async function saveCover(blob: Blob): Promise<string> {

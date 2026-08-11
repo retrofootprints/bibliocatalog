@@ -84,11 +84,15 @@ body {
 }
 .navbar__item {
   flex: 1;
+  /* Five tabs at 0.7rem: without this, the longest label ("Definições") forces
+     the flex items wider than a 360px viewport allows. */
+  min-width: 0;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 8px 0 6px;
+  padding: 8px 2px 6px;
   text-decoration: none;
   color: var(--color-text-muted);
   font-size: 0.7rem;
@@ -98,6 +102,26 @@ body {
 }
 .navbar__icon {
   font-size: 1.2rem;
+}
+.navbar__label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.navbar__badge {
+  position: absolute;
+  top: 2px;
+  right: 50%;
+  transform: translateX(150%);
+  font-size: 0.5rem;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 999px;
+  background: var(--color-warn-bg);
+  color: var(--color-warn-text);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 /* Buttons & inputs */
@@ -520,6 +544,142 @@ body {
   display: flex;
   gap: 6px;
   flex-shrink: 0;
+}
+
+/* Shelves */
+.shelf-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.shelf-list__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.shelf-list__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+.shelf-list__name {
+  font-weight: 600;
+}
+.shelf-list__meta {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+.shelf-list__actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Spine OCR (beta) */
+.spine-gate__warning {
+  border-left: 3px solid var(--color-warn-text);
+  background: var(--color-warn-bg);
+  color: var(--color-warn-text);
+  padding: 10px 12px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.85rem;
+}
+.spine-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.spine-card {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.spine-card--editing {
+  display: block;
+}
+.spine-card--rejected {
+  opacity: 0.55;
+}
+.spine-card--accepted {
+  border-color: var(--color-ok-text);
+}
+.spine-card__crop {
+  width: 56px;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+}
+.spine-card__crop--empty {
+  height: 80px;
+  background: var(--color-border);
+}
+.spine-card__body {
+  min-width: 0;
+}
+.spine-card__raw {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+.spine-card__raw-label {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+.spine-card__badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.spine-card__status {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+.spine-card__match {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+}
+.spine-card__match-cover {
+  width: 36px;
+  height: 54px;
+  flex-shrink: 0;
+}
+.spine-card__match-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+.spine-card__match-authors {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+.spine-card__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 /* Settings */

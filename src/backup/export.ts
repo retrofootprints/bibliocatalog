@@ -13,7 +13,12 @@ function blobToDataUrl(blob: Blob): Promise<string> {
 }
 
 export async function buildExport(includeCovers: boolean): Promise<BiblioCatalogExport> {
-  const [books, shelves, loans] = await Promise.all([db.books.toArray(), db.shelves.toArray(), db.loans.toArray()]);
+  const [books, shelves, loans, scans] = await Promise.all([
+    db.books.toArray(),
+    db.shelves.toArray(),
+    db.loans.toArray(),
+    db.scans.toArray(),
+  ]);
 
   let covers: ExportedCover[] | undefined;
   if (includeCovers) {
@@ -33,6 +38,7 @@ export async function buildExport(includeCovers: boolean): Promise<BiblioCatalog
     books,
     shelves,
     loans,
+    scans,
     covers,
   };
 }

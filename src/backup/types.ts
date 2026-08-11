@@ -1,4 +1,4 @@
-import type { Book, Cover, Loan, Shelf } from '../db/types';
+import type { Book, Cover, Loan, Scan, Shelf } from '../db/types';
 
 /** Full-fidelity export format. Covers are embedded as base64 data URIs when requested. */
 export interface ExportedCover {
@@ -13,6 +13,8 @@ export interface BiblioCatalogExport {
   books: Book[];
   shelves: Shelf[];
   loans: Loan[];
+  /** Shelf scan history (SPEC §3.5). Derived results only — never image data. */
+  scans?: Scan[];
   covers?: ExportedCover[];
 }
 

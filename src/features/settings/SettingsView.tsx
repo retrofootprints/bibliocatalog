@@ -5,6 +5,7 @@ import { getSettings, updateSettings } from '../../db/queries';
 import type { Settings, UiLocale } from '../../db/types';
 import { formatBytes, formatDate, locale, t } from '../../locales';
 import { ConfirmDialog } from '../../ui/ConfirmDialog';
+import { navigate } from '../../ui/router';
 import { showToast } from '../../ui/toast';
 import { refreshBooks } from '../library/store';
 
@@ -35,6 +36,12 @@ export function SettingsView() {
 
   async function changeMetadataSource(source: 'openlibrary' | 'googlebooks') {
     const updated = await updateSettings({ preferredMetadataSource: source });
+    setSettings(updated);
+  }
+
+  /** Turning this off re-arms the beta explainer and download gate on the Spines tab. */
+  async function changeOcrEnabled(enabled: boolean) {
+    const updated = await updateSettings({ ocrEnabled: enabled });
     setSettings(updated);
   }
 
@@ -111,6 +118,18 @@ export function SettingsView() {
             {t('settings.metadataSource.googlebooks')}
           </label>
         </div>
+      </section>
+
+      <section class="settings-section">
+        <h2>{t('settings.ocr.title')}</h2>
+        <p>{t('settings.ocr.body')}</p>
+        <label class="settings-section__row">
+          <input type="checkbox" checked={settings.ocrEnabled} onChange={(e) => changeOcrEnabled((e.target as HTMLInputElement).checked)} />
+          {t('settings.ocr.toggle')}
+        </label>
+        <button type="button" class="btn" onClick={() => navigate('/shelves')}>
+          {t('settings.ocr.shelves')}
+        </button>
       </section>
 
       <section class="settings-section">

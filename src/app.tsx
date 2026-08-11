@@ -2,6 +2,8 @@ import { BookDetailView } from './features/library/BookDetailView';
 import { LibraryView } from './features/library/LibraryView';
 import { ScanView } from './features/scan/ScanView';
 import { SettingsView } from './features/settings/SettingsView';
+import { ShelfScanView } from './features/shelf/ShelfScanView';
+import { ShelvesView } from './features/shelves/ShelvesView';
 import { ManualEntryForm } from './intake/manual/ManualEntryForm';
 import { NavBar } from './ui/NavBar';
 import { ToastHost } from './ui/ToastHost';
@@ -17,6 +19,8 @@ export function App() {
         {(route.name === 'book' || route.name === 'book-edit') && <BookDetailView id={route.id} />}
         {route.name === 'add' && <ManualEntryForm />}
         {route.name === 'scan' && <ScanView />}
+        {route.name === 'spines' && <ShelfScanView />}
+        {route.name === 'shelves' && <ShelvesView />}
         {route.name === 'settings' && <SettingsView />}
       </main>
       <NavBar />

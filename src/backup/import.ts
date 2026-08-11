@@ -27,9 +27,9 @@ export function parseExportFile(text: string): BiblioCatalogExport {
 }
 
 export async function importData(data: BiblioCatalogExport, mode: ImportMode): Promise<ImportResult> {
-  await db.transaction('rw', db.books, db.shelves, db.loans, db.covers, async () => {
+  await db.transaction('rw', db.books, db.shelves, db.loans, db.scans, db.covers, async () => {
     if (mode === 'replace') {
-      await Promise.all([db.books.clear(), db.shelves.clear(), db.loans.clear(), db.covers.clear()]);
+      await Promise.all([db.books.clear(), db.shelves.clear(), db.loans.clear(), db.scans.clear(), db.covers.clear()]);
     }
 
     if (data.covers) {
@@ -42,6 +42,7 @@ export async function importData(data: BiblioCatalogExport, mode: ImportMode): P
     await db.books.bulkPut(data.books);
     if (data.shelves?.length) await db.shelves.bulkPut(data.shelves);
     if (data.loans?.length) await db.loans.bulkPut(data.loans);
+    if (data.scans?.length) await db.scans.bulkPut(data.scans);
   });
 
   return { bookCount: data.books.length };

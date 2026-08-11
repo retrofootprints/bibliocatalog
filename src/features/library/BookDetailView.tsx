@@ -8,6 +8,7 @@ import { ConfirmDialog } from '../../ui/ConfirmDialog';
 import { CoverImage } from '../../ui/CoverImage';
 import { navigate, currentRoute } from '../../ui/router';
 import { showToast } from '../../ui/toast';
+import { refreshShelves, shelfName } from '../shelves/store';
 import { refreshBooks } from './store';
 
 export interface BookDetailViewProps {
@@ -21,6 +22,7 @@ export function BookDetailView({ id }: BookDetailViewProps) {
 
   useEffect(() => {
     let cancelled = false;
+    refreshShelves();
     getBook(id).then((b) => {
       if (!cancelled) setBook(b ?? null);
     });
@@ -49,6 +51,7 @@ export function BookDetailView({ id }: BookDetailViewProps) {
       readStatus: values.readStatus,
       copyLabel: values.copyLabel.trim() || undefined,
       acquiredAt: values.acquiredAt ? new Date(values.acquiredAt).toISOString() : undefined,
+      shelfId: values.shelfId || undefined,
       coverBlobId: values.coverBlobId,
     });
     await refreshBooks();
@@ -154,6 +157,12 @@ export function BookDetailView({ id }: BookDetailViewProps) {
           <>
             <dt>{t('book.copyLabel')}</dt>
             <dd>{book.copyLabel}</dd>
+          </>
+        )}
+        {shelfName(book.shelfId) && (
+          <>
+            <dt>{t('shelf.label')}</dt>
+            <dd>{shelfName(book.shelfId)}</dd>
           </>
         )}
         {book.tags.length > 0 && (
